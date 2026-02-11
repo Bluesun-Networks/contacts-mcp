@@ -1,5 +1,6 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { GitContactStore } from '../store/index.js';
+import type { AppConfig } from '../config.js';
 import { registerSearchTool } from './search.js';
 import { registerGetTool } from './get.js';
 import { registerCreateTool } from './create.js';
@@ -14,7 +15,7 @@ import { registerProvidersTool } from './providers.js';
 import { registerRollbackTool } from './rollback.js';
 import { registerHistoryTool } from './history.js';
 
-export function registerAllTools(server: McpServer, store: GitContactStore): void {
+export function registerAllTools(server: McpServer, store: GitContactStore, config?: AppConfig): void {
   registerSearchTool(server, store);
   registerGetTool(server, store);
   registerCreateTool(server, store);
@@ -24,8 +25,8 @@ export function registerAllTools(server: McpServer, store: GitContactStore): voi
   registerMergeTool(server, store);
   registerImportTool(server, store);
   registerExportTool(server, store);
-  registerSyncTool(server, store);
-  registerProvidersTool(server, store);
+  registerSyncTool(server, store, config);
+  registerProvidersTool(server, store, config);
   registerRollbackTool(server, store);
   registerHistoryTool(server, store);
 }

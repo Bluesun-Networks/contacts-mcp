@@ -13,7 +13,7 @@ export function createServer(config: AppConfig): { server: McpServer; store: Git
 
   const store = new GitContactStore(config.storePath);
 
-  registerAllTools(server, store);
+  registerAllTools(server, store, config);
   registerAllResources(server, store);
 
   logger.info('MCP server created, store path:', config.storePath);
