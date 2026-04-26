@@ -88,6 +88,7 @@ non-AI command-line operations for other local tools:
 contacts-mcp export --format json --output contacts.json
 contacts-mcp export --format json --output -
 contacts-mcp resolve --input contact-points.json --output -
+contacts-mcp sync-provider --provider apple --direction pull
 ```
 
 `resolve` input is JSON:
@@ -102,6 +103,17 @@ contacts-mcp resolve --input contact-points.json --output -
 
 Use `CONTACTS_MCP_STORE=/path/to/store` when exporting or resolving against a custom
 store path.
+
+Before exporting Contacts from macOS, pull Apple Contacts into the local git-backed
+store:
+
+```bash
+contacts-mcp sync-provider --provider apple --direction pull
+```
+
+If you do not have an Apple provider in `~/.contacts-mcp/config.json`, the CLI will use
+the built-in Apple provider on macOS. The first run may trigger a Contacts permission
+prompt.
 
 ### Resources
 

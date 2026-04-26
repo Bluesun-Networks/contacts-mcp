@@ -180,6 +180,25 @@ describe('MCP Integration', () => {
     expect(result.matched).toBe(2);
   });
 
+  it('should expose sync-provider CLI help', async () => {
+    const cli = spawn('bun', ['dist/index.js', '--help'], {
+      cwd: path.resolve(import.meta.dirname, '../..'),
+      env: { ...process.env, CONTACTS_MCP_STORE: storePath },
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    const output = await new Promise<string>((resolve, reject) => {
+      let text = '';
+      cli.stdout!.on('data', data => { text += data.toString(); });
+      cli.on('error', reject);
+      cli.on('close', code => {
+        if (code === 0) resolve(text);
+        else reject(new Error(`CLI exited with ${code}`));
+      });
+    });
+
+    expect(output).toContain('sync-provider');
+  });
+
   it('should update the contact', async () => {
     const id = send('tools/call', {
       name: 'update_contact',
