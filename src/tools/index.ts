@@ -14,6 +14,7 @@ import { registerSyncTool } from './sync.js';
 import { registerProvidersTool } from './providers.js';
 import { registerRollbackTool } from './rollback.js';
 import { registerHistoryTool } from './history.js';
+import { registerResolveTool } from './resolve.js';
 
 export function registerAllTools(server: McpServer, store: GitContactStore, config?: AppConfig): void {
   registerSearchTool(server, store);
@@ -25,6 +26,7 @@ export function registerAllTools(server: McpServer, store: GitContactStore, conf
   registerMergeTool(server, store);
   registerImportTool(server, store);
   registerExportTool(server, store);
+  registerResolveTool(server, store);
   registerSyncTool(server, store, config);
   registerProvidersTool(server, store, config);
   registerRollbackTool(server, store);

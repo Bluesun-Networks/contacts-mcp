@@ -58,7 +58,7 @@ bunx @modelcontextprotocol/inspector bun dist/index.js
 
 ## What It Does
 
-Once connected, your AI assistant gets 13 tools and 4 resources for managing contacts:
+Once connected, your AI assistant gets 14 tools and 4 resources for managing contacts:
 
 ### Tools
 
@@ -73,10 +73,35 @@ Once connected, your AI assistant gets 13 tools and 4 resources for managing con
 | `merge_contacts` | Merge 2+ contacts into one. Strategies: `union` (combine all data), `keep-newest`, `keep-oldest`. Manual field overrides supported. |
 | `import_contacts` | Bulk import from a `.vcf` file. Optional dedup check against existing contacts. Dry-run mode. |
 | `export_contacts` | Export to `.vcf`, `.csv`, or `.json`. Optional search filter. |
+| `resolve_contact_points` | Resolve phone numbers and email addresses to contacts using exact normalized matching. Reports matched, ambiguous, and unresolved results. |
 | `sync_provider` | Sync with a configured remote provider (Google, Apple, CardDAV). Pull, push, or both. Configurable conflict resolution. |
 | `list_providers` | Show all configured providers and their sync status. |
 | `rollback` | Undo changes by reverting git commits. Modes: undo last N, revert to a specific commit, revert to a tag. Dry-run supported. Creates a safety tag first so the rollback itself can be undone. |
 | `history` | View change history — globally or for a specific contact. Shows operation type, commit hash, date, and message. |
+
+### CLI Export And Resolve
+
+The binary still starts the MCP stdio server by default. It also supports deterministic
+non-AI command-line operations for other local tools:
+
+```bash
+contacts-mcp export --format json --output contacts.json
+contacts-mcp export --format json --output -
+contacts-mcp resolve --input contact-points.json --output -
+```
+
+`resolve` input is JSON:
+
+```json
+{
+  "phones": ["+18016022838", "(801) 602-2838"],
+  "emails": ["alex@example.com"],
+  "defaultCountry": "US"
+}
+```
+
+Use `CONTACTS_MCP_STORE=/path/to/store` when exporting or resolving against a custom
+store path.
 
 ### Resources
 

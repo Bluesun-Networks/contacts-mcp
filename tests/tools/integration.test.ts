@@ -85,12 +85,12 @@ describe('MCP Integration', () => {
     expect(initResp.result.capabilities.resources).toBeTruthy();
   });
 
-  it('should list all 13 tools', async () => {
+  it('should list all 14 tools', async () => {
     const id = send('tools/list');
     const resp = await waitForResponse(id);
 
     const toolNames = resp.result.tools.map((t: any) => t.name);
-    expect(toolNames).toHaveLength(13);
+    expect(toolNames).toHaveLength(14);
     expect(toolNames).toContain('search_contacts');
     expect(toolNames).toContain('get_contact');
     expect(toolNames).toContain('create_contact');
@@ -100,6 +100,7 @@ describe('MCP Integration', () => {
     expect(toolNames).toContain('merge_contacts');
     expect(toolNames).toContain('import_contacts');
     expect(toolNames).toContain('export_contacts');
+    expect(toolNames).toContain('resolve_contact_points');
     expect(toolNames).toContain('sync_provider');
     expect(toolNames).toContain('list_providers');
     expect(toolNames).toContain('rollback');
@@ -163,6 +164,20 @@ describe('MCP Integration', () => {
 
     expect(results.length).toBeGreaterThanOrEqual(1);
     expect(results[0].fullName).toBe('Integration Test User');
+  });
+
+  it('should resolve contact points deterministically', async () => {
+    const id = send('tools/call', {
+      name: 'resolve_contact_points',
+      arguments: { phones: ['555-000-1111'], emails: ['INTEG@TEST.COM'] },
+    });
+    const resp = await waitForResponse(id);
+    const result = JSON.parse(resp.result.content[0].text);
+
+    expect(result.results).toHaveLength(2);
+    expect(result.results[0].status).toBe('matched');
+    expect(result.results[1].status).toBe('matched');
+    expect(result.matched).toBe(2);
   });
 
   it('should update the contact', async () => {
