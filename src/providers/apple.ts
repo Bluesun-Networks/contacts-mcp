@@ -195,15 +195,26 @@ export class AppleProvider extends BaseProvider {
     });
   }
 
+  private jxaTimeoutMs(): number {
+    const configured = this.config.timeoutMs ?? process.env.CONTACTS_MCP_APPLE_TIMEOUT_MS;
+    const parsed = Number(configured);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : 600000;
+  }
+
   private async runJxa(script: string): Promise<string> {
+    const timeout = this.jxaTimeoutMs();
     try {
       const { stdout } = await execFileAsync('osascript', ['-l', 'JavaScript', '-e', script], {
-        timeout: 120000,
-        maxBuffer: 10 * 1024 * 1024,
+        timeout,
+        maxBuffer: 50 * 1024 * 1024,
       });
       return stdout.trim();
     } catch (err: any) {
-      throw new ProviderError(this.name, `JXA error: ${err.message}`);
+      const timedOut = err.killed || err.signal === 'SIGTERM' || /timed out/i.test(err.message ?? '');
+      const hint = timedOut
+        ? ` (timed out after ${timeout}ms; large Apple Contacts libraries can need a higher CONTACTS_MCP_APPLE_TIMEOUT_MS)`
+        : '';
+      throw new ProviderError(this.name, `JXA error${hint}: ${err.message}`);
     }
   }
 }
